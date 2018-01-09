@@ -1,4 +1,4 @@
-# greengenes-names-nodes
+# Kraken Greengenes
 Conversion of Greengenes database taxonomy into names and nodes files with same format as NCBI taxdump names.dmp and nodes.dmp files. 
 
 The conversion of the Greengenes taxonomy to this format might be useful when seeking to use the Greengenes database with software/programs that use NCBI names.dmp and nodes.dmp. Switching the .dmp NCBI files by the .dmp Greengenes files can facilitate usage of the Greengenes taxonomy (Ex: Kraken taxonomic sequence classification system, by DerrickWood, https://github.com/DerrickWood/kraken).
