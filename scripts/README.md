@@ -1,4 +1,4 @@
-These scripts can be used to create all necessary files for the construction of a Greengenes Kraken database.
+These scripts can be used to create all necessary files for the construction of a Greengenes 13_5 Kraken database.
 
 - GG_to_kraken.sh
   - Bash script with commands to download the Greengenes 13_5 fasta file, obtain sequences headers, remove duplicated sequences. Also calls the python script and switches original headers with headers for Kraken db building.
@@ -26,7 +26,7 @@ After running, the output files of interest are:
   - gg_13_5_kraken_ready.fasta (fasta file with the sequences ready to be added to custom database of Kraken).
   - names.dmp and nodes.dmp (files to be moved/copied to the 'taxonomy' folder of the Kraken custom database).
   
-The scripts should run well but there might be some problems due to different configurations (using version 2.x of python, not having pandas...) 
+The scripts should run well but there might be some problems due to different configurations (using version 2.x of python, not having pandas, using different version of Greengenes...) 
   
 Instructions for building the Kraken Greengenes DB after generating the files:
 
