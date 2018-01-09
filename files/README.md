@@ -23,7 +23,7 @@ Instructions:
 - Download Greengenes 13_5 fasta file from: ftp://greengenes.microbio.me/greengenes_release/current/gg_13_5_with_header.fasta.gz
 
 - Remove duplicated sequences with the help of seqkit (https://github.com/shenwei356/seqkit)
- - Example command: seqkit rmdup -s gg_13_5_with_header.fasta > gg_13_5_with_header_noDUPS.fasta
+  - Example command: seqkit rmdup -s gg_13_5_with_header.fasta > gg_13_5_with_header_noDUPS.fasta
 
 - Switch headers from fasta file without duplicated sequences with the headers present in the gg_13_5_kraken_headers.txt file
   - Example command: awk '/^>/{getline < "gg_13_5_kraken_headers.txt"}1' gg_13_5_with_header_noDUPS.fasta > gg_13_5_kraken_ready.fasta
