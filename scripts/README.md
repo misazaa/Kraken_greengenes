@@ -26,7 +26,7 @@ After running, the output files of interest are:
   - gg_13_5_kraken_ready.fasta (fasta file with the sequences ready to be added to custom database of Kraken).
   - names.dmp and nodes.dmp (files to be moved/copied to the 'taxonomy' folder of the Kraken custom database).
   
-The scripts should run well but there might be some problems due to different configurations (using version 2.x of python, not having pandas, using different version of Greengenes...) 
+The scripts should run well but there might be issues due to some configurations that are not script dependent (the script is called with 'python3' expression to assure that python 3.x is used. Not having pandas or having pandas only on a different python installation than the one called will lead to import error. Using a different version of Greengenes might not work, just use 13_5 that's the one the script downloads).
   
 Instructions for building the Kraken Greengenes DB after generating the files:
 
