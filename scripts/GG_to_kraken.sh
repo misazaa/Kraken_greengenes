@@ -95,7 +95,7 @@ rm headers gg_IDs acc_num acc_ver names taxonomy kingdom phylum class order fami
 
 echo "Creating names.dmp, nodes.dmp and fasta file with headers specific for Kraken..."
 
-python GG_to_kraken.py gg_13_5_header.tsv gg_13_5_header_noDups.tsv
+python3 GG_to_kraken.py gg_13_5_header.tsv gg_13_5_header_noDups.tsv
 
 awk '/^>/{getline < "gg_13_5_headers_kraken_noDUPS.txt"}1' gg_13_5_with_header_noDUPS.fasta > gg_13_5_kraken_ready.fasta
 

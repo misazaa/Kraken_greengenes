@@ -1,7 +1,7 @@
+#!/usr/bin/python3
 # -*- coding: utf-8 -*-
 
 import sys
-import subprocess
 import collections
 import pandas as pd
 
@@ -29,7 +29,7 @@ def gg_to_kraken(headers_tsv, noDups_tsv):
     # Define 7 main ranks
     rank_names = ["Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species"]
     # Create dict to keep track of variables
-    rank_dict = {}
+    rank_dict = collections.OrderedDict()
     # Add root to dict
     rank_dict['root'] = root_rank
     
@@ -40,7 +40,7 @@ def gg_to_kraken(headers_tsv, noDups_tsv):
         # remove possible nan value
         names = [n for n in names if str(n) != 'nan']
         # create dict to store rank info
-        rank_dict[rank_names[rank]] = {}
+        rank_dict[rank_names[rank]] = collections.OrderedDict()
         
         for n in names:
             # increment id by 1
