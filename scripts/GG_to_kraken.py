@@ -17,13 +17,13 @@ def gg_to_kraken(headers_tsv, noDups_tsv):
     # Create names list to append names
     names_list = []
     # Add root rank to names_list
-    root_name = root_rank + "\t" + "|" + "\t" + "root" + "\t" + "|" + "\t" + "\t" + "|" + "\t" + "scientific name" + "\t" + "|"
+    root_name = root_rank + "\t|\troot\t|\t\t|\tscientific name\t|"
     names_list.append(root_name)
     
     # Create nodes list to append nodes
     nodes_list = []
     # Add root rank to nodes_list
-    root_node = root_rank + "\t" + "|" + "\t" + root_rank + "\t" + "|" + "\t" + "no rank" + "\t" + "|"
+    root_node = root_rank + "\t|\t" + root_rank + "\t|\tno rank\t|"
     nodes_list.append(root_node)
     
     # Define 7 main ranks
@@ -34,38 +34,51 @@ def gg_to_kraken(headers_tsv, noDups_tsv):
     rank_dict['root'] = root_rank
     
     for rank in range(0, len(rank_names)):
+        # Determine name of the rank and name of the parent rank
+        rank_name = rank_names[rank]
+        parent_rank = rank_names[rank-1]
+        # Create dict to assign rank names and taxIDs
+        rank_dict[rank_name] = collections.OrderedDict()
         
         # identify unique name values
-        names = list(set(taxid_df[rank_names[rank]]))
-        # remove possible nan value
+        names = list(set(taxid_df[rank_name] + '|' + taxid_df[parent_rank]))
+        # remove missing values
         names = [n for n in names if str(n) != 'nan']
-        # create dict to store rank info
-        rank_dict[rank_names[rank]] = collections.OrderedDict()
+        # create dict to assign names
+        names_dict = collections.OrderedDict()
         
-        for n in names:
+        # Create child|parent dict
+        for name in names:
+            n = name.split('|')
+            names_dict[n[0]] = n[1]
+        
+        for n in names_dict:
             # increment id by 1
             i += 1
             # determine parent node name
-            parent_name = taxid_df.loc[taxid_df[rank_names[rank]] == str(n), rank_names[rank-1]].iloc[0]
+            parent_name = names_dict[n]
             # Create name string and append to names_list
-            if rank_names[rank] == "Species":
+            if rank_name == "Species":
+                species_name = parent_name + ' ' + n
                 # if rank is 'Species', genus name is concatenated with species name
-                name = str(i) + "\t" + "|" + "\t" + (str(parent_name) + ' ' + str(n)) + "\t" + "|" + "\t" + "\t" + "|" + "\t" + "scientific name" + "\t" + "|"
+                name = "%s\t|\t%s\t|\t\t|\tscientific name\t|" % (str(i), species_name)
                 names_list.append(name)
                 
             else:
-                name = str(i) + "\t" + "|" + "\t" + str(n) + "\t" + "|" + "\t" + "\t" + "|" + "\t" + "scientific name" + "\t" + "|"
+                name = "%s\t|\t%s\t|\t\t|\tscientific name\t|" % (str(i), n)
                 names_list.append(name)
             # Add rank name with id to dict
-            (rank_dict[rank_names[rank]])[str(n)] = i
+            rank_dict[rank_name][n] = i
+            node_id = rank_dict[rank_name][n]
             # Create node string to append to nodes_list
-            if rank_names[rank] == "Kingdom":
+            if rank_name == "Kingdom":
                 # if rank is 'Kingdom', parent node is 'root'
-                node = str((rank_dict[rank_names[rank]])[str(n)]) + "\t" + "|" + "\t" + rank_dict['root'] + "\t" + "|" + "\t" + rank_names[rank].lower() + "\t" + "|"
+                node = "%s\t|\t%s\t|\t%s\t|" % (node_id, rank_dict['root'], "kingdom")
                 nodes_list.append(node)
                 
             else:
-                node = str((rank_dict[rank_names[rank]])[str(n)]) + "\t" + "|" + "\t" + str((rank_dict[rank_names[rank-1]])[parent_name]) + "\t" + "|" + "\t" + rank_names[rank] + "\t" + "|"
+                parent_id = rank_dict[parent_rank][parent_name]
+                node = "%s\t|\t%s\t|\t%s\t|" % (node_id, parent_id, rank_name)
                 nodes_list.append(node)
             
     # Create and fill names and nodes files
@@ -87,51 +100,36 @@ def gg_to_kraken(headers_tsv, noDups_tsv):
 
 def kraken_headers(noDups_tsv, rank_dict):
     
+    rank_names = ["Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species"]
     # read tsv file with headers from deduplicated fasta file
     gg_noDUPS = pd.read_csv(noDups_tsv, sep = '\t')
 
     # Create transpose of dataframe to facilitate retrieval of last non-nan elements
-    transpose_df = gg_noDUPS.transpose()
+    #transpose_df = gg_noDUPS.transpose()
     
-    num_columns = transpose_df.shape[1]
+    num_lines = gg_noDUPS.shape[0]
     # create dict to store info for headers construction
     headers_dict = collections.OrderedDict()
-    for col in range(0, num_columns):
-        # greengenes id
-        gg_id = transpose_df[col][0]
-        # determine last valid rank (last non-nan rank)
-        last_valid_rank = transpose_df[col].last_valid_index()
-        # name of the last valid rank
-        rank_name = transpose_df[col][str(last_valid_rank)]
-        # add greengenes id and rank_name to dict
-        headers_dict[gg_id] = rank_name
-        
-        # determine rank name id and substitute in headers dict
-        if str(last_valid_rank) == "Kingdom":
-            headers_dict[gg_id] = rank_dict["Kingdom"][headers_dict[gg_id]]
-            
-        if str(last_valid_rank) == "Phylum":
-            headers_dict[gg_id] = rank_dict["Phylum"][headers_dict[gg_id]]
-            
-        if str(last_valid_rank) == "Class":
-            headers_dict[gg_id] = rank_dict["Class"][headers_dict[gg_id]]
-            
-        if str(last_valid_rank) == "Order":
-            headers_dict[gg_id] = rank_dict["Order"][headers_dict[gg_id]]
-            
-        if str(last_valid_rank) == "Family":
-            headers_dict[gg_id] = rank_dict["Family"][headers_dict[gg_id]]
-            
-        if str(last_valid_rank) == "Genus":
-            headers_dict[gg_id] = rank_dict["Genus"][headers_dict[gg_id]]
-            
-        if str(last_valid_rank) == "Species":
-            headers_dict[gg_id] = rank_dict["Species"][headers_dict[gg_id]]
     
+    tax_lol = list(gg_noDUPS.values.tolist())
+    
+    for e in range(0, num_lines):
+        tax_lol[e] = [n for n in tax_lol[e] if str(n) != 'nan']
+    
+    for l in range(0, num_lines):
+        
+        # greengenes id
+        gg_id = tax_lol[l][0]
+       
+        rank_name = tax_lol[l][-1]
+        rank_lol = rank_names[len(tax_lol[l])-5]
+        # determine rank name id and substitute in headers dict
+        headers_dict[gg_id] = rank_dict[rank_lol][rank_name]
+        
     # create list with headers    
     kraken_headers_list = []
     for ele in headers_dict:
-        header = ">" + str(ele) + "|" + "kraken:taxid" + "|" + str(headers_dict[ele])
+        header = ">" + str(ele) + "|kraken:taxid|" + str(headers_dict[ele])
         kraken_headers_list.append(header)
         
     # save headers in file
