@@ -20,7 +20,7 @@ Instructions:
   - without root provoleges:
     - Example command: sudo ./GG_to_kraken.sh
 
-The process takes a while, but there are outputs indicating the step at which it is (around 9 minutes with i5-6200U and 8Gb ram laptop).
+The process takes a while, but there are outputs indicating the step at which it is (around 3 minutes with i5-6200U and 8Gb ram laptop).
 After running, the output files of interest are:
   - gg_13_5_kraken_ready.fasta (fasta file with the sequences ready to be added to custom database of Kraken).
   - names.dmp and nodes.dmp (files to be moved/copied to the 'taxonomy' folder of the Kraken custom database).
