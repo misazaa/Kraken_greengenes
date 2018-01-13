@@ -103,9 +103,6 @@ def kraken_headers(noDups_tsv, rank_dict):
     rank_names = ["Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species"]
     # read tsv file with headers from deduplicated fasta file
     gg_noDUPS = pd.read_csv(noDups_tsv, sep = '\t')
-
-    # Create transpose of dataframe to facilitate retrieval of last non-nan elements
-    #transpose_df = gg_noDUPS.transpose()
     
     num_lines = gg_noDUPS.shape[0]
     # create dict to store info for headers construction
